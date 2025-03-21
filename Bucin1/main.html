@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romantic Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffebf0;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1 {
+            color: #e91e63;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center">
+    <div class="container text-center" id="passwordContainer">
+        <h1>Hi, baby!</h1>
+        <h1>Enter Password</h1>
+        <input type="password" id="passwordInput" class="form-control" placeholder="Enter password">
+        <button class="btn btn-danger mt-3" onclick="checkPassword()">Submit</button>
+        <p id="passwordMessage" class="text-danger hidden">Incorrect password. Try again!</p>
+    </div>
+    
+    <div class="container text-center hidden" id="quizContainer">
+        <h1>Romantic Love Quiz</h1>
+        <p id="question" class="fw-bold"></p>
+        <div id="options" class="d-grid gap-2"></div>
+        <div id="finalResult" class="hidden mt-4 p-3 border border-danger rounded"></div>
+    </div>
+
+    <script>
+        const correctPassword = "love123";
+        let wrongAnswers = [];
+        
+        function checkPassword() {
+            const input = document.getElementById("passwordInput").value;
+            if (input === correctPassword) {
+                document.getElementById("passwordContainer").classList.add("hidden");
+                document.getElementById("quizContainer").classList.remove("hidden");
+                loadQuestion();
+            } else {
+                document.getElementById("passwordMessage").classList.remove("hidden");
+            }
+        }
+        
+        const questions = [
+            { question: "What is the best way to express love?", options: ["Giving gifts", "Spending quality time", "Saying sweet words"], answer: 1 },
+            { question: "Which of these is a symbol of love?", options: ["Diamond", "Rose", "Star"], answer: 1 },
+            { question: "What is the most important thing in a relationship?", options: ["Trust", "Money", "Fame"], answer: 0 },
+            { question: "What color is most associated with love?", options: ["Blue", "Red", "Green"], answer: 1 },
+            { question: "Which of these is a romantic gesture?", options: ["Giving flowers", "High-five", "Shaking hands"], answer: 0 },
+            { question: "What day is commonly celebrated as Valentine’s Day?", options: ["February 14", "March 8", "December 25"], answer: 0 },
+            { question: "What does ‘I love you’ mean?", options: ["You’re my friend", "I deeply care about you", "You owe me money"], answer: 1 },
+            { question: "Which of these is a classic romantic movie?", options: ["Titanic", "Fast & Furious", "Jaws"], answer: 0 },
+            { question: "What is the key to a lasting relationship?", options: ["Communication", "Expensive gifts", "Ignoring each other"], answer: 0 },
+            { question: "What is a popular love song theme?", options: ["Heartbreak", "Spaceships", "Banking"], answer: 0 }
+        ];
+        
+        let currentQuestion = 0;
+        
+        function loadQuestion() {
+            document.getElementById("question").innerText = questions[currentQuestion].question;
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            questions[currentQuestion].options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.classList.add("btn", "btn-outline-danger");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(selectedIndex) {
+            if (selectedIndex !== questions[currentQuestion].answer) {
+                wrongAnswers.push({
+                    question: questions[currentQuestion].question,
+                    selected: questions[currentQuestion].options[selectedIndex],
+                    correct: questions[currentQuestion].options[questions[currentQuestion].answer]
+                });
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showFinalResult();
+            }
+        }
+        
+        function showFinalResult() {
+            document.getElementById("quizContainer").innerHTML = "<h1>Quiz Completed!</h1>";
+            let finalMessage = `<h3>You made ${wrongAnswers.length} mistakes.</h3>`;
+            if (wrongAnswers.length > 0) {
+                finalMessage += "<ul class='list-group'>";
+                wrongAnswers.forEach(wrong => {
+                    finalMessage += `<li class='list-group-item'><b>Question:</b> ${wrong.question}<br><b>Your answer:</b> ${wrong.selected}<br><b>Correct answer:</b> ${wrong.correct}</li>`;
+                });
+                finalMessage += "</ul>";
+            }
+            document.getElementById("quizContainer").innerHTML += finalMessage;
+        }
+    </script>
+</body>
+</html>
